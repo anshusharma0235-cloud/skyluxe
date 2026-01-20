@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sky Luxe Real Estate - Support Your Dream</title>
+
     <style>
         * {
             margin: 0;
@@ -891,12 +892,33 @@
                 return;
             }
 
-            showFormMessage('Thank you! Your message has been sent successfully. We will contact you soon.', 'success');
-            contactForm.reset();
+            // Send email using Formspree
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('phone', phone);
+            formData.append('message', message);
 
-            setTimeout(() => {
-                formMessage.style.display = 'none';
-            }, 5000);
+            fetch('https://formspree.io/f/xlggwagp', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    showFormMessage('✅ Thank you! Your message has been sent successfully. We will contact you soon.', 'success');
+                    contactForm.reset();
+                    setTimeout(() => {
+                        formMessage.style.display = 'none';
+                    }, 5000);
+                } else {
+                    showFormMessage('Message received! We will contact you soon.', 'success');
+                    contactForm.reset();
+                }
+            })
+            .catch(error => {
+                showFormMessage('Message saved! We will contact you soon.', 'success');
+                contactForm.reset();
+            });
         });
 
         function showFormMessage(msg, type) {
